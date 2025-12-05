@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Multilingual Speech Translator</title>
+    <style>
+        body {
+            font-family: Poppins, Arial;
+            background: #eef2f7;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Centered container for pages */
+        .page {
+            display: none;
+            padding: 40px;
+        }
+        .active {
+            display: block;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #222;
+        }
+
+        /* Home page buttons */
+        .home-options {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 80px;
+        }
+
+        .option-card {
+            background: white;
+            padding: 40px;
+            width: 250px;
+            border-radius: 20px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
+            transition: 0.3s;
+        }
+
+        .option-card:hover {
+            transform: scale(1.07);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+        }
+
+        /* Smaller video box */
+        #video-container {
+            position: relative;
+            width: 360px;
+            height: 220px;
+            margin: 0 auto;
+            margin-top: 20px;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            background: black;
+        }
+
+        #subtitle-box {
+            position: absolute;
+            bottom: 6px;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-size: 16px;
+            text-shadow: 2px 2px 4px black;
+            padding: 4px;
+        }
+
+        select, button, textarea, input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+        }
+
+        button:hover {
+            background: #005fcc;
+        }
+
+        .panel {
+            width: 80%;
+            margin: 20px auto;
+        }
+
+        /* Upload Section */
+        .upload-box {
+            width: 50%;
+            margin: auto;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+<body>
+
+
+<!-- ░░░ HOME PAGE ░░░ -->
+<div id="home-page" class="page active">
+    <h1>AI-Powered Speech & Video Translator</h1>
+    <h3 style="text-align:center; color:#444;">Choose how you want to translate</h3>
+
+    <div class="home-options">
+        <div class="option-card" onclick="openPage('live-page')">
+            <h2>🎥 Live Interaction</h2>
+            <p>Real-time transcription & translation</p>
+        </div>
+
+        <div class="option-card" onclick="openPage('upload-page')">
+            <h2>📁 Upload Video/Audio</h2>
+            <p>Transcribe & translate recordings</p>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- ░░░ LIVE TRANSLATION PAGE ░░░ -->
+<div id="live-page" class="page">
+    <h1>🎥 Live Speech Translation</h1>
+
+    <div style="text-align:center;">
+        <button onclick="openPage('home-page')" style="width:200px;">⬅ Back</button>
+    </div>
+
+    <div id="video-container">
+        <video id="video" autoplay playsinline></video>
+        <div id="subtitle-box">Waiting to start...</div>
+    </div>
+
+    <div class="panel">
+        <label>Source Language</label>
+        <select id="source-lang">
+            <option value="en">English</option>
+            <option value="hi">Hindi</option>
+            <option value="ta">Tamil</option>
+        </select>
+
+        <label>Target Language</label>
+        <select id="target-lang">
+            <option value="hi">Hindi</option>
+            <option value="en">English</option>
+            <option value="ta">Tamil</option>
+        </select>
+
+        <button id="start-live-btn">Start Live Translation</button>
+
+        <h3>Live Transcription</h3>
+        <textarea id="live-transcription" rows="4"></textarea>
+
+        <h3>Live Translation</h3>
+        <textarea id="live-translation" rows="4"></textarea>
+    </div>
+</div>
+
+
+
+
+<!-- ░░░ UPLOAD PAGE ░░░ -->
+<div id="upload-page" class="page">
+    <h1>📁 Upload Audio/Video for Translation</h1>
+
+    <div style="text-align:center;">
+        <button onclick="openPage('home-page')" style="width:200px;">⬅ Back</button>
+    </div>
+
+    <div class="upload-box">
+        <input type="file" id="file-input" accept="video/*,audio/*">
+
+        <h3>Preview</h3>
+        <video id="preview" controls style="width:100%; border-radius:12px; display:none;"></video>
+        <audio id="audio-preview" controls style="width:100%; display:none;"></audio>
+
+        <button onclick="processUpload()">Process File</button>
+    </div>
+
+    <div class="panel">
+        <h3>Transcription</h3>
+        <textarea id="upload-transcription" rows="4"></textarea>
+
+        <h3>Translation</h3>
+        <textarea id="upload-translation" rows="4"></textarea>
+    </div>
+</div>
+
+
+
+
+<script>
+/* ░░░ PAGE NAVIGATION ░░░ */
+function openPage(pageId) {
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    document.getElementById(pageId).classList.add("active");
+}
+
+
+/* ░░░ START CAMERA ON LIVE PAGE ░░░ */
+async function startCamera() {
+    const video = document.getElementById("video");
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: { width: 360, height: 220 },
+            audio: true
+        });
+        video.srcObject = stream;
+    } catch (err) {
+        alert("Camera access failed: " + err);
+    }
+}
+
+startCamera();
+
+
+/* ░░░ FILE UPLOAD PREVIEW ░░░ */
+document.getElementById("file-input").onchange = function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    const url = URL.createObjectURL(file);
+
+    if (file.type.startsWith("video")) {
+        document.getElementById("preview").src = url;
+        document.getElementById("preview").style.display = "block";
+        document.getElementById("audio-preview").style.display = "none";
+    } else {
+        document.getElementById("audio-preview").src = url;
+        document.getElementById("audio-preview").style.display = "block";
+        document.getElementById("preview").style.display = "none";
+    }
+};
+
+
+/* ░░░ PROCESS UPLOADED MEDIA (BACKEND LATER) ░░░ */
+function processUpload() {
+    document.getElementById("upload-transcription").value = 
+        "Processing transcription... (backend needed)";
+    document.getElementById("upload-translation").value = 
+        "Processing translation... (backend needed)";
+}
+</script>
+
+</body>
+</html>
