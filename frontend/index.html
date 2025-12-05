@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>AI Multilingual Speech Translator</title>
+
     <style>
         body {
             font-family: Poppins, Arial;
@@ -115,7 +116,7 @@
 <body>
 
 
-<!-- ░░░ HOME PAGE ░░░ -->
+<!-- HOME PAGE -->
 <div id="home-page" class="page active">
     <h1>AI-Powered Speech & Video Translator</h1>
     <h3 style="text-align:center; color:#444;">Choose how you want to translate</h3>
@@ -136,7 +137,7 @@
 
 
 
-<!-- ░░░ LIVE TRANSLATION PAGE ░░░ -->
+<!-- LIVE TRANSLATION PAGE -->
 <div id="live-page" class="page">
     <h1>🎥 Live Speech Translation</h1>
 
@@ -177,7 +178,7 @@
 
 
 
-<!-- ░░░ UPLOAD PAGE ░░░ -->
+<!--UPLOAD PAGE -->
 <div id="upload-page" class="page">
     <h1>📁 Upload Audio/Video for Translation</h1>
 
@@ -204,61 +205,6 @@
     </div>
 </div>
 
-
-
-
-<script>
-/* ░░░ PAGE NAVIGATION ░░░ */
-function openPage(pageId) {
-    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-    document.getElementById(pageId).classList.add("active");
-}
-
-
-/* ░░░ START CAMERA ON LIVE PAGE ░░░ */
-async function startCamera() {
-    const video = document.getElementById("video");
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-            video: { width: 360, height: 220 },
-            audio: true
-        });
-        video.srcObject = stream;
-    } catch (err) {
-        alert("Camera access failed: " + err);
-    }
-}
-
-startCamera();
-
-
-/* ░░░ FILE UPLOAD PREVIEW ░░░ */
-document.getElementById("file-input").onchange = function () {
-    const file = this.files[0];
-    if (!file) return;
-
-    const url = URL.createObjectURL(file);
-
-    if (file.type.startsWith("video")) {
-        document.getElementById("preview").src = url;
-        document.getElementById("preview").style.display = "block";
-        document.getElementById("audio-preview").style.display = "none";
-    } else {
-        document.getElementById("audio-preview").src = url;
-        document.getElementById("audio-preview").style.display = "block";
-        document.getElementById("preview").style.display = "none";
-    }
-};
-
-
-/* ░░░ PROCESS UPLOADED MEDIA (BACKEND LATER) ░░░ */
-function processUpload() {
-    document.getElementById("upload-transcription").value = 
-        "Processing transcription... (backend needed)";
-    document.getElementById("upload-translation").value = 
-        "Processing translation... (backend needed)";
-}
-</script>
-
+<script src="script.js"></script>
 </body>
 </html>
