@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+numpy
+python-multipart
+pydub
+ffmpeg-python
+whisper      # OpenAI whisper python package
+torch        # choose appropriate version for your GPU / CPU
+aiofiles
+python-dotenv
+requests      # optional for translation API calls
