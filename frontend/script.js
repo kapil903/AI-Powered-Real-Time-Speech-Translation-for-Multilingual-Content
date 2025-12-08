@@ -1,5 +1,3 @@
-
-
 /* ------------------------------------------
    GLOBAL VARIABLES FOR CAMERA & AUDIO
 ------------------------------------------ */
@@ -30,13 +28,13 @@ function stopLiveStream() {
 
     // Disconnect audio processor
     if (processor) {
-        try { processor.disconnect(); } catch {}
+        try { processor.disconnect(); } catch { }
         processor = null;
     }
 
     // Close audio context
     if (audioContext) {
-        try { audioContext.close(); } catch {}
+        try { audioContext.close(); } catch { }
         audioContext = null;
     }
 
@@ -115,13 +113,51 @@ document.getElementById("file-input").onchange = function () {
 };
 
 
+
 /* ------------------------------------------
-   PROCESS UPLOADED MEDIA (BACKEND LATER)
+   SEND MEDIA TO BACKEND (AI TRANSCRIPTION)
 ------------------------------------------ */
-function processUpload() {
-    document.getElementById("upload-transcription").value =
-        "Processing transcription... (backend needed)";
-    document.getElementById("upload-translation").value =
-        "Processing translation... (backend needed)";
+async function sendMediaToBackend() {
+    const fileInput = document.getElementById("file-input");
+    const file = fileInput.files[0];
+
+    if (!file) {
+        alert("Please upload an audio or video file.");
+        return;
+    }
+
+    // Show loading text
+    document.getElementById("upload-transcription").value = "Processing...";
+    document.getElementById("upload-translation").value = "Processing...";
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+        const response = await fetch("http://127.0.0.1:8000/upload-file/", {
+            method: "POST",
+            body: formData
+        });
+
+
+        const data = await response.json();
+
+        // Display results from backend
+        document.getElementById("upload-transcription").value = data.transcription;
+        document.getElementById("upload-translation").value = data.translation;
+
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Backend error. Check console.");
+    }
 }
 
+
+
+/* ------------------------------------------
+   PROCESS UPLOADED MEDIA BUTTON (OLD)
+   — replaced by sendMediaToBackend()
+------------------------------------------ */
+function processUpload() {
+    alert("Use the new backend-powered button!");
+}

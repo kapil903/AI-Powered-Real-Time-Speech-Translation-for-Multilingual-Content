@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>AI Multilingual Speech Translator</title>
 
@@ -16,11 +17,13 @@
             display: none;
             padding: 40px;
         }
+
         .active {
             display: block;
         }
 
-        h1, h2 {
+        h1,
+        h2 {
             text-align: center;
             color: #222;
         }
@@ -40,13 +43,13 @@
             border-radius: 20px;
             text-align: center;
             cursor: pointer;
-            box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
             transition: 0.3s;
         }
 
         .option-card:hover {
             transform: scale(1.07);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
         }
 
         /* Smaller video box */
@@ -76,7 +79,10 @@
             padding: 4px;
         }
 
-        select, button, textarea, input {
+        select,
+        button,
+        textarea,
+        input {
             width: 100%;
             padding: 12px;
             border-radius: 10px;
@@ -109,102 +115,107 @@
             background: white;
             border-radius: 15px;
             text-align: center;
-            box-shadow: 0 5px 18px rgba(0,0,0,0.15);
+            box-shadow: 0 5px 18px rgba(0, 0, 0, 0.15);
         }
     </style>
 </head>
+
 <body>
 
 
-<!-- HOME PAGE -->
-<div id="home-page" class="page active">
-    <h1>AI-Powered Speech & Video Translator</h1>
-    <h3 style="text-align:center; color:#444;">Choose how you want to translate</h3>
+    <!-- HOME PAGE -->
+    <div id="home-page" class="page active">
+        <h1>AI-Powered Speech & Video Translator</h1>
+        <h3 style="text-align:center; color:#444;">Choose how you want to translate</h3>
 
-    <div class="home-options">
-        <div class="option-card" onclick="openPage('live-page')">
-            <h2>🎥 Live Interaction</h2>
-            <p>Real-time transcription & translation</p>
+        <div class="home-options">
+            <div class="option-card" onclick="openPage('live-page')">
+                <h2>🎥 Live Interaction</h2>
+                <p>Real-time transcription & translation</p>
+            </div>
+
+            <div class="option-card" onclick="openPage('upload-page')">
+                <h2>📁 Upload Video/Audio</h2>
+                <p>Transcribe & translate recordings</p>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- LIVE TRANSLATION PAGE -->
+    <div id="live-page" class="page">
+        <h1>🎥 Live Speech Translation</h1>
+
+        <div style="text-align:center;">
+            <button onclick="openPage('home-page')" style="width:200px;">⬅ Back</button>
         </div>
 
-        <div class="option-card" onclick="openPage('upload-page')">
-            <h2>📁 Upload Video/Audio</h2>
-            <p>Transcribe & translate recordings</p>
+        <div id="video-container">
+            <video id="video" autoplay playsinline></video>
+            <div id="subtitle-box">Waiting to start...</div>
+        </div>
+
+        <div class="panel">
+            <label>Source Language</label>
+            <select id="source-lang">
+                <option value="en">English</option>
+                <option value="hi">Hindi</option>
+                <option value="ta">Tamil</option>
+            </select>
+
+            <label>Target Language</label>
+            <select id="target-lang">
+                <option value="hi">Hindi</option>
+                <option value="en">English</option>
+                <option value="ta">Tamil</option>
+            </select>
+
+            <button id="start-live-btn">Start Live Translation</button>
+
+            <h3>Live Transcription</h3>
+            <textarea id="live-transcription" rows="4"></textarea>
+
+            <h3>Live Translation</h3>
+            <textarea id="live-translation" rows="4"></textarea>
         </div>
     </div>
-</div>
 
 
 
 
-<!-- LIVE TRANSLATION PAGE -->
-<div id="live-page" class="page">
-    <h1>🎥 Live Speech Translation</h1>
+    <!--UPLOAD PAGE -->
+    <div id="upload-page" class="page">
+        <h1>📁 Upload Audio/Video for Translation</h1>
 
-    <div style="text-align:center;">
-        <button onclick="openPage('home-page')" style="width:200px;">⬅ Back</button>
+        <div style="text-align:center;">
+            <button onclick="openPage('home-page')" style="width:200px;">⬅ Back</button>
+        </div>
+
+        <div class="upload-box">
+            <input type="file" id="file-input" accept="video/*,audio/*">
+
+            <h3>Preview</h3>
+            <video id="preview" controls style="width:100%; border-radius:12px; display:none;"></video>
+            <audio id="audio-preview" controls style="width:100%; display:none;"></audio>
+
+            <button onclick="sendMediaToBackend()" style="margin-top: 15px; padding: 10px 18px; border-radius: 8px;
+                   background: #4CAF50; color: white; border: none; cursor: pointer;">
+                Processing file
+            </button>
+        </div>
+
+        <div class="panel">
+            <h3>Transcription</h3>
+            <textarea id="upload-transcription" rows="4"></textarea>
+
+            <h3>Translation</h3>
+            <textarea id="upload-translation" rows="4"></textarea>
+        </div>
     </div>
 
-    <div id="video-container">
-        <video id="video" autoplay playsinline></video>
-        <div id="subtitle-box">Waiting to start...</div>
-    </div>
-
-    <div class="panel">
-        <label>Source Language</label>
-        <select id="source-lang">
-            <option value="en">English</option>
-            <option value="hi">Hindi</option>
-            <option value="ta">Tamil</option>
-        </select>
-
-        <label>Target Language</label>
-        <select id="target-lang">
-            <option value="hi">Hindi</option>
-            <option value="en">English</option>
-            <option value="ta">Tamil</option>
-        </select>
-
-        <button id="start-live-btn">Start Live Translation</button>
-
-        <h3>Live Transcription</h3>
-        <textarea id="live-transcription" rows="4"></textarea>
-
-        <h3>Live Translation</h3>
-        <textarea id="live-translation" rows="4"></textarea>
-    </div>
-</div>
-
-
-
-
-<!--UPLOAD PAGE -->
-<div id="upload-page" class="page">
-    <h1>📁 Upload Audio/Video for Translation</h1>
-
-    <div style="text-align:center;">
-        <button onclick="openPage('home-page')" style="width:200px;">⬅ Back</button>
-    </div>
-
-    <div class="upload-box">
-        <input type="file" id="file-input" accept="video/*,audio/*">
-
-        <h3>Preview</h3>
-        <video id="preview" controls style="width:100%; border-radius:12px; display:none;"></video>
-        <audio id="audio-preview" controls style="width:100%; display:none;"></audio>
-
-        <button onclick="processUpload()">Process File</button>
-    </div>
-
-    <div class="panel">
-        <h3>Transcription</h3>
-        <textarea id="upload-transcription" rows="4"></textarea>
-
-        <h3>Translation</h3>
-        <textarea id="upload-translation" rows="4"></textarea>
-    </div>
-</div>
-
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
+
 </html>
